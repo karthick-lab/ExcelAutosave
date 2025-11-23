@@ -1,6 +1,7 @@
 package com;
 
 
+import Reusable.ConfigLoader;
 import com.sun.net.httpserver.HttpServer;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpExchange;
@@ -14,7 +15,7 @@ import java.net.http.HttpResponse;
 
 public class ExcelAutomationServer {
 
-    private static final String TRACKER_PATH = "C:\\Users\\admin\\Desktop\\tracker\\Tracker.xlsx"; // Update this path
+    private static final String TRACKER_PATH = ConfigLoader.get("tracker.path");; // Update this path
     private static HttpServer server;
     public static void main(String[] args) throws IOException, InterruptedException {
         server = HttpServer.create(new InetSocketAddress(5000), 0);
@@ -24,7 +25,7 @@ public class ExcelAutomationServer {
         System.out.println("✅ Server running at http://localhost:5000/trigger");
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:5000/trigger"))
+                .uri(URI.create(ConfigLoader.get("server.url")))
                 .POST(HttpRequest.BodyPublishers.noBody())
                 .build();
         client.send(request, HttpResponse.BodyHandlers.ofString());
@@ -51,7 +52,7 @@ public class ExcelAutomationServer {
 
         private void automateExcel() {
             try {
-                String scriptPath = "C:\\Users\\admin\\Desktop\\AutosaveExcelbatch\\automate_excel.ps1";
+                String scriptPath = ConfigLoader.get("autosave.powershell.path");
                 ProcessBuilder pb = new ProcessBuilder("powershell.exe", "-ExecutionPolicy", "Bypass", "-File", scriptPath);
                 pb.redirectErrorStream(true);
                 Process process = pb.start();
